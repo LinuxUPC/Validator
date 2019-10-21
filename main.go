@@ -13,6 +13,6 @@ func main() {
 	router.HandleFunc("/api", GetHomeEndpoint).Methods("GET")
 	router.HandleFunc("/api/register", RegisterEndpoint).Methods("POST")
 	router.HandleFunc("/api/relation", RelationEndpoint).Methods("POST")
-	router.Handle("/", http.FileSerover(http.Dir("static/")))
+	router.Handle("/", http.FileServer(http.Dir("static/")))
 	log.Fatal(http.ListenAndServe(":3004", router))
 }
