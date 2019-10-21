@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"log"
@@ -14,11 +15,31 @@ func GetHomeEndpoint(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+type User struct {
+	name string
+}
+
+func RegisterEndpoint(w http.ResponseWriter, req *http.Request) {
+	name := User{}
+	d := json.NewDecoder(req.Body)
+	if err := d.Decode(&name); err != nil {
+		http.Error(w, err.Error(), 400)
+		log.Print("Error register parsing")
+		log.Print(err.Error())
+		return
+	}
+	log.Printf("%s", name.name)
+	if _, err := fmt.Fprintf(w, "Welcome %s", name.name); err != nil {
+		log.Fatal("Error register response")
+	}
+}
+
 func main() {
 	log.Print("Init server.")
 
 	router := mux.NewRouter()
-	router.HandleFunc("/api", GetHomeEndpoint)
+	router.HandleFunc("/api", GetHomeEndpoint).Methods("GET")
+	router.HandleFunc("/api/register/", RegisterEndpoint).Methods("POST")
 	router.Handle("/", http.FileServer(http.Dir("static/")))
 	log.Fatal(http.ListenAndServe(":3004", router))
 }
