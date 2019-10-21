@@ -40,7 +40,7 @@ func main() {
 
 	router := mux.NewRouter()
 	router.HandleFunc("/api", GetHomeEndpoint).Methods("GET")
-	router.HandleFunc("/api/register/", RegisterEndpoint).Methods("POST")
+	router.HandleFunc("/api/register", RegisterEndpoint).Methods("POST")
 	router.Handle("/", http.FileServer(http.Dir("static/")))
 	log.Fatal(http.ListenAndServe(":3004", router))
 }
