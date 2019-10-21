@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 )
-
 func main() {
 	log.Print("Init server.")
+
 
 	router := mux.NewRouter()
 	router.HandleFunc("/api", GetHomeEndpoint).Methods("GET")
