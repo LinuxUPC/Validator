@@ -15,7 +15,7 @@ func GetHomeEndpoint(w http.ResponseWriter, req *http.Request) {
 }
 
 type User struct {
-	Name string `json:"name"`
+	Id string `json:"id"`
 }
 
 func RegisterEndpoint(w http.ResponseWriter, req *http.Request) {
@@ -28,8 +28,8 @@ func RegisterEndpoint(w http.ResponseWriter, req *http.Request) {
 		log.Print(err.Error())
 		return
 	}
-	log.Printf("%s", user.Name)
-	if _, err := fmt.Fprintf(w, "Welcome %s", user.Name); err != nil {
+	manager.register <- &user
+	if _, err := fmt.Fprintf(w, "Welcome %s", user.Id); err != nil {
 		log.Fatal("Error register response")
 	}
 }
@@ -49,8 +49,12 @@ func RelationEndpoint(w http.ResponseWriter, req *http.Request) {
 		log.Print(err.Error())
 		return
 	}
-	log.Printf("%s tursts %s", rel.Scanned.Name, rel.Scans.Name)
-	if _, err := fmt.Fprintf(w, "%s added to your connections.", rel.Scanned.Name); err != nil {
+	manager.relation <- &rel
+	if _, err := fmt.Fprintf(w, "%s added to your connections.", rel.Scanned.Id); err != nil {
 		log.Fatal("Error relation response")
 	}
+}
+
+func LogEndpoint(w http.ResponseWriter, req *http.Request) {
+	manager.debug <- 1
 }
