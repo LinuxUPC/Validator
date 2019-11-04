@@ -4,12 +4,20 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"os"
 )
 
 var manager *Manager
 
 func main() {
 	log.Print("Init server.")
+
+	//init env
+	if err := os.Mkdir("tmp", os.ModePerm); err != nil {
+		if _, err = os.Stat("tmp"); os.IsNotExist(err) {
+			log.Print("Error setting up tmp folder. Error is: ", err.Error())
+		}
+	}
 
 	manager = NewManager()
 	graph := NewGraph()
@@ -21,6 +29,8 @@ func main() {
 	router.HandleFunc("/api/register", RegisterEndpoint).Methods("POST")
 	router.HandleFunc("/api/relation", RelationEndpoint).Methods("POST")
 	router.HandleFunc("/api/log", LogEndpoint)
+	router.HandleFunc("/api/json", WriteJsonEndpoint)
+	router.HandleFunc("/api/load", LoadJsonEndpoint)
 	router.Handle("/", http.FileServer(http.Dir("static/")))
 	log.Fatal(http.ListenAndServe(":3004", router))
 }

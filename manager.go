@@ -33,6 +33,10 @@ func (m Manager) manage(users map[string]*User, g *Graph) {
 				return
 			} else if op == 1 {
 				g.Log()
+			} else if op == 2 {
+				g.ToJson("tmp/graph.json")
+			} else if op == 3 {
+				g.FromJson("tmp/graph.json")
 			} else {
 				log.Printf("Unknown operation %d", op)
 			}

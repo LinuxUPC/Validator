@@ -1,7 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
+	"os"
+	"strings"
 )
 
 type Node struct {
@@ -65,11 +68,99 @@ func (g Graph) AddEdge(from string, to string) bool {
 }
 
 func (g Graph) Log() {
+	log.Print("loggiiiing")
 	for _, v := range g.nodes {
 		log.Printf("Node %s:", v.id)
 		for _, c := range v.edges {
 			log.Printf(" %s", c)
 		}
 		log.Printf("")
+	}
+}
+
+func (g Graph) ToJson(filename string) {
+	file, err := os.Create(filename)
+	if err != nil {
+		log.Print("Error writting to Json")
+		log.Print("Error is: ", err.Error())
+		return
+	}
+	defer file.Close()
+	_, _ = file.WriteString("{\n\"nodes\": [\n")
+	i := 0
+	for _, v := range g.nodes {
+		if i != 0 {
+			_, _ = file.WriteString(",\n")
+		}
+		_, _ = file.WriteString("{\n\"id\": \"")
+		_, _ = file.WriteString(v.id)
+		_, _ = file.WriteString("\",\n\"label\":\"")
+		_, _ = file.WriteString(v.id)
+		_, _ = file.WriteString("\",\n\"size\":1\n}")
+		i = i + 1
+	}
+	_, _ = file.WriteString("],\n\"edges\": [\n")
+	i = 0
+	for _, from := range g.nodes {
+		for _, to := range from.edges {
+			if i != 0 {
+				_, _ = file.WriteString(",\n")
+			}
+			_, _ = file.WriteString("{\n\"id\":\"")
+			_, _ = file.WriteString(strings.Join([]string{from.id, to}, ""))
+			_, _ = file.WriteString("\",\n\"source\":\"")
+			_, _ = file.WriteString(from.id)
+			_, _ = file.WriteString("\",\n\"target\":\"")
+			_, _ = file.WriteString(to)
+			_, _ = file.WriteString("\"\n}")
+
+			i = i + 1
+		}
+	}
+	_, _ = file.WriteString("\n]\n}")
+}
+
+func (g Graph) FromJson(filename string) {
+	var newG struct {
+		Nodes []struct {
+			Id    string `json:"id"`
+			Label string `json:"label"`
+			Size  int    `json:"size"`
+		} `json:"nodes"`
+
+		Edges []struct {
+			Id     string `json:"id"`
+			Source string `json:"source"`
+			Target string `json:"target"`
+		} `json:"edges"`
+	}
+
+	file, err := os.OpenFile(filename, os.O_RDONLY, 0755)
+	if err != nil {
+		log.Print("cannot open json")
+		log.Print("Error is: ", err.Error())
+		return
+	}
+	d := json.NewDecoder(file)
+	if err := d.Decode(&newG); err != nil {
+		log.Print("Error parsing graph ")
+		log.Print(err.Error())
+		return
+	}
+	//delete current G
+	for _, del := range g.nodes {
+		st := del.id
+		del = nil
+		delete(g.nodes, st)
+	}
+
+	//fill from newG nodes
+	for _, n := range newG.Nodes {
+		g.AddAloneNode(n.Id)
+	}
+
+	//fill from newG relations
+	for _, rel := range newG.Edges {
+		g.AddEdge(rel.Source, rel.Target)
 	}
 }

@@ -58,3 +58,11 @@ func RelationEndpoint(w http.ResponseWriter, req *http.Request) {
 func LogEndpoint(w http.ResponseWriter, req *http.Request) {
 	manager.debug <- 1
 }
+
+func WriteJsonEndpoint(w http.ResponseWriter, req *http.Request) {
+	manager.debug <- 2
+}
+
+func LoadJsonEndpoint(w http.ResponseWriter, req *http.Request) {
+	manager.debug <- 3
+}
