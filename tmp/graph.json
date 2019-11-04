@@ -1,0 +1,45 @@
+{
+"nodes": [
+{
+"id": "pere",
+"label":"pere",
+"size":1
+},
+{
+"id": "lol",
+"label":"lol",
+"size":1
+},
+{
+"id": "wtf",
+"label":"wtf",
+"size":1
+},
+{
+"id": "miquel",
+"label":"miquel",
+"size":1
+}],
+"edges": [
+{
+"id":"wtflol",
+"source":"wtf",
+"target":"lol"
+},
+{
+"id":"miquelpere",
+"source":"miquel",
+"target":"pere"
+},
+{
+"id":"peremiquel",
+"source":"pere",
+"target":"miquel"
+},
+{
+"id":"perelol",
+"source":"pere",
+"target":"lol"
+}
+]
+}
