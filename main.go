@@ -31,6 +31,6 @@ func main() {
 	router.HandleFunc("/api/log", LogEndpoint)
 	router.HandleFunc("/api/json", WriteJsonEndpoint)
 	router.HandleFunc("/api/load", LoadJsonEndpoint)
-	router.Handle("/", http.FileServer(http.Dir("static/")))
+	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("static"))))
 	log.Fatal(http.ListenAndServe(":3004", router))
 }
